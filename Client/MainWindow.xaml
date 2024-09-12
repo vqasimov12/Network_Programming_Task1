@@ -1,0 +1,20 @@
+﻿<Window x:Class="Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Client"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300" WindowStartupLocation="CenterScreen">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <TextBox Margin="10" Width="200" Name="IP" />
+        <TextBox Margin="10" Width="200" Name="Port" />
+        <StackPanel Orientation="Horizontal">
+            <TextBox Margin="10 5 5 5" Width="150" Name="file" />
+            <Button Width="40" Content="File" Background="#060405" Foreground="White" Height="20" Name="Filebtn" Click="Filebtn_Click"/>
+        </StackPanel>
+        <Button  Margin="10" Background="#060405" Foreground="White" Content="Send" Width="100" Height="20" Click="Button_Click"/>
+
+    </StackPanel>
+</Window>
