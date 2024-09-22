@@ -12,8 +12,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _ = Task.Run(() => ChangeImage());
     }
-
-
+    string prevSource = "";
     void ChangeImage()
     {
         var port = 27001;
@@ -21,37 +20,39 @@ public partial class MainWindow : Window
         var endPoint = new IPEndPoint(ip, port);
         using var listener = new TcpListener(endPoint);
         listener.Start();
+
         while (true)
         {
             var client = listener.AcceptTcpClient();
-            var task = Task.Run(() =>
-            {
-                try
-                {
-                    using var ns = client.GetStream();
-                    using var source = new FileStream("Image.jpeg", FileMode.Create, FileAccess.Write);
-                    var bytes = new byte[22];
+            _ = Task.Run(() =>
+              {
+                  try
+                  {
+                      using var st = client.GetStream();
+                      var a = Guid.NewGuid().ToString();
+                      using var source = new FileStream(Path.GetFullPath($"{a}.jpeg"), FileMode.OpenOrCreate, FileAccess.Write);
+                      var buffer = new byte[1024];
+                      int bytesRead;
+                      while ((bytesRead = st.Read(buffer, 0, buffer.Length)) > 0)
+                          source.Write(buffer, 0, bytesRead);
+                      source.Close();
+                      Application.Current.Dispatcher.Invoke(() =>
+                      {
+                          img.Source = new BitmapImage(new Uri(Path.GetFullPath($"{a}.jpeg"), UriKind.RelativeOrAbsolute));
+                          if (File.Exists(prevSource))
+                              File.Delete(prevSource);
+                          prevSource = $"{a}.jpeg";
+                      });
+                  }
+                  catch (Exception ex)
+                  {
 
-                    do
-                    {
-
-                        ns.Read(bytes, 0, bytes.Length);
-                        source.Write(bytes, 0, bytes.Length);
-
-                    } while (bytes.Length > 0);
-                    source.Close();
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        img.Source = new BitmapImage(new Uri("Image.jpeg", UriKind.RelativeOrAbsolute));
-                    });
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            });
-
+                  }
+                  finally
+                  {
+                      client.Close();
+                  }
+              });
         }
-
     }
 }

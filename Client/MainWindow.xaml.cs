@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Net;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Client;
 public partial class MainWindow : Window
@@ -16,47 +17,48 @@ public partial class MainWindow : Window
     {
         if (file.Text.Length < 1) return;
         using var client = new TcpClient();
-
-        var port = 27001;
-        var ip = IPAddress.Parse("192.168.1.8");
-        var ep = new IPEndPoint(ip, port);
-
-        try
+        object a = new();
+        var btn = sender as Button;
+        if (btn is null)
+            return;
+        lock (a)
         {
-            client.Connect(ep);
-            if (client.Connected)
+            btn.IsEnabled = false;
+            var port = 27001;
+            var ip = IPAddress.Parse("192.168.1.8");
+            var ep = new IPEndPoint(ip, port);
+
+            try
             {
-                using (var source = new FileStream(file.Text, FileMode.Open, FileAccess.Read))
-                {
-                    using var bw = new BinaryWriter(client.GetStream());
-                    int len = 22;
-                    var bytes = new byte[len];
-                    var fileSize = source.Length;
-                    bw.Write(fileSize);
-
-                    do
-                    {
-                        len = source.Read(bytes, 0, bytes.Length);
-                        bw.Write(bytes, 0, len);
-                        fileSize -= len;
-                    } while (len > 0);
-                }
+                client.Connect(ep);
+                if (!client.Connected)
+                    return;
+                using var st = client.GetStream();
+                using var source = new FileStream(Path.GetFullPath(file.Text), FileMode.Open, FileAccess.Read);
+                var buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
+                    st.Write(buffer, 0, bytesRead);
             }
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message);
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                btn.IsEnabled = true;
+            }
         }
     }
 
     private void Filebtn_Click(object sender, RoutedEventArgs e)
     {
-        OpenFileDialog op = new OpenFileDialog();
-        op.Title = "Select a picture";
-        op.Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg";
-        if (op.ShowDialog() == true)
+        var op = new OpenFileDialog()
         {
-            file.Text = op.FileName;
-        }
+            Title = "Select a picture",
+            Filter = "JPEG (*.jpg;*.jpeg)|*.jpg;*.jpeg"
+        };
+        if (op.ShowDialog() == true)
+            file.Text = Path.GetFullPath(op.FileName);
     }
 }
