@@ -15,7 +15,7 @@ public partial class MainWindow : Window
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        if (file.Text.Length < 1) return;
+        if (file.Text.Length < 1||string.IsNullOrEmpty(Port.Text)||string.IsNullOrEmpty(IP.Text)) return;
         using var client = new TcpClient();
         object a = new();
         var btn = sender as Button;
@@ -24,8 +24,8 @@ public partial class MainWindow : Window
         lock (a)
         {
             btn.IsEnabled = false;
-            var port = 27001;
-            var ip = IPAddress.Parse("192.168.1.8");
+            var port = Convert.ToInt32(Port.Text);
+            var ip = IPAddress.Parse(IP.Text);
             var ep = new IPEndPoint(ip, port);
 
             try

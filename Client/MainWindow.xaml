@@ -7,12 +7,18 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="300" Width="300" WindowStartupLocation="CenterScreen">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-
-        <TextBox Margin="10" Width="200" Name="IP" />
-        <TextBox Margin="10" Width="200" Name="Port" />
         <StackPanel Orientation="Horizontal">
-            <TextBox Margin="10 5 5 5" Width="150" Name="file" IsReadOnly="True" Background="White"/>
+            <TextBlock Text="IP" Margin="10" Width="23"/>
+
+            <TextBox Margin="10" Width="200" Name="IP" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Port" Margin="10" Width="23"/>
+            <TextBox Margin="10" Width="200" Name="Port"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
             <Button Width="40" Content="File" Background="#060405" Foreground="White" Height="20" Name="Filebtn" Click="Filebtn_Click"/>
+            <TextBox Margin="13 5 5 5" Width="200" Name="file" IsReadOnly="True" Background="White"/>
         </StackPanel>
         <Button  Margin="10" Background="#060405" x:Name="SendBtn" Foreground="White" Content="Send" Width="100" Height="20" Click="Button_Click"/>
 

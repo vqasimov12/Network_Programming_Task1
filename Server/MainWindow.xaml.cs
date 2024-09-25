@@ -39,10 +39,10 @@ public partial class MainWindow : Window
                       Application.Current.Dispatcher.Invoke(() =>
                       {
                           img.Source = new BitmapImage(new Uri(Path.GetFullPath($"{a}.jpeg"), UriKind.RelativeOrAbsolute));
-                          if (File.Exists(prevSource))
-                              File.Delete(prevSource);
-                          prevSource = $"{a}.jpeg";
                       });
+                      if (File.Exists(prevSource))
+                          File.Delete(prevSource);
+                      prevSource = $"{a}.jpeg";
                   }
                   catch (Exception ex)
                   {
